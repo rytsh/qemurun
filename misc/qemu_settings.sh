@@ -44,6 +44,14 @@ function q_gfx_f() {
     "
 }
 
+function q_smb() {
+    # $1 -> path of share folder
+    smb_opts="\
+        -net user,smb=${1}      \
+        -net nic,model=virtio   \
+        "
+}
+
 function q_disk() {
     # $1 -> path main disk file
     disk_opts="\

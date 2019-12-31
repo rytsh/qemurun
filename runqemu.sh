@@ -85,6 +85,7 @@ q_disk "${QCOW_IMG_DISK}"
 q_wdg
 q_boot
 q_bios "${PROJ_DIR}/profile/OVMF.fd"
+q_smb "/mnt/wnd"
 
 #### RUN
 # -cpu qemu64,${cpu_vars}
@@ -97,6 +98,7 @@ qemu-system-x86_64  \
     -enable-kvm                     \
     -nodefaults                     \
     ${bios_opts}                    \
+    ${smb_opts}                     \
     ${net_opts}                     \
     ${gfx_opts}                     \
     ${disk_opts}                    \
