@@ -4,11 +4,12 @@
 #----------------------------
 
 # path settings
-PROJ_DIR=$(realpath $(dirname "$0"))
+PROJ_DIR=$(dirname "$0")
 cd ${PROJ_DIR}
 
 # import docker functions
-CONF_FILE="./misc/config.ini"
+DOCKER_IMAGE=${DOCKER_IMAGE:-runqemu:latest}
+
 source ./misc/docker.sh
 source ./misc/qemu.sh
 source ./misc/qemu_settings.sh
@@ -32,30 +33,32 @@ EOF
 
 ALL_ARGS=$(echo "$0 $@" | sed "s/--docker//g")
 
-while [[ "$#" -gt 0 ]]; do
-    case "${1}" in
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
     -p | --profile)
         PROFILE="${2}"
-        shift 2
+        shift 1
         ;;
     -i | --img)
         IMG="${2}"
-        shift 2
+        shift 1
         ;;
     --docker)
         DOCKER="Y"
-        shift 1
+        ;;
+    --sudo)
+        PERMISSION="sudo"
         ;;
     -h | --help)
         usage
         exit 0
         ;;
     *)
+        echo "Unknown option: $1"
         usage >&2
         exit 1
         ;;
-    esac
-done
+esac; shift 1; done
+if [[ "$1" == '--' ]]; then shift; fi
 
 if [[ -z "${PROFILE}" ]]; then
     echo "You should give profile name!"
@@ -77,24 +80,25 @@ PROFILE_FOLDER="${PROJ_DIR}/profile/${PROFILE}"
 generate_qcow "${PROFILE_FOLDER}" ${IMG}
 
 q_net
-# q_gfx
-q_gfx_f
+q_gfx
+# q_gfx_f
 q_disk "${QCOW_IMG_DISK}"
 # [[ -n "${IMG}" ]] && q_disk_usb "${QCOW_IMG}"
 [[ -n "${IMG}" ]] && q_disk_cd "${QCOW_IMG}"
 q_wdg
 q_boot
-q_bios "${PROJ_DIR}/profile/OVMF.fd"
-q_smb "/mnt/wnd"
+q_bios "${PROJ_DIR}/bios/OVMF.fd"
+# q_smb "/mnt/share"
 
 #### RUN
 # -cpu qemu64,${cpu_vars}
 # -smp cpus=4,maccpus=4,cores=4,threads=1,sockets=1
 
 set -x
-qemu-system-x86_64  \
+${PERMISSION} qemu-system-x86_64  \
     -machine pc,accel=kvm:xen:tcg   \
-    -m 3072                         \
+    -cpu host                       \
+    -m 4096                         \
     -enable-kvm                     \
     -nodefaults                     \
     ${bios_opts}                    \

@@ -15,10 +15,6 @@ function docker_run() {
         bash -c "${ALL_ARGS}"
 }
 
-function read_ini() {
-    eval $(grep "=" ${CONFIG_FILE} | tr -d ' ' | xargs)
-}
-
 function docker_pass() {
-    read_ini && docker_build && docker_run
+    docker_build && docker_run
 }

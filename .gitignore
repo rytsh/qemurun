@@ -1,3 +1,12 @@
-profile/*
+/profile/*
+!/profile/.gitkeep
 
-!profile/OVMF*
+/iso/*
+!/iso/.gitkeep
+
+
+/edk2
+/logo.png
+
+/qemu
+/ipxe

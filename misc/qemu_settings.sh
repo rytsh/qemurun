@@ -57,6 +57,7 @@ function q_disk() {
     disk_opts="\
         -drive if=none,id=diskM,file=${1},cache=unsafe  \
         -device ide-hd,drive=diskM,bootindex=1          \
+        -drive format=raw,file=fat:rw:bootloader,media=disk \
         "
 }
 
