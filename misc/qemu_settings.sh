@@ -54,9 +54,19 @@ function q_smb() {
 
 function q_disk() {
     # $1 -> path main disk file
-    disk_opts="\
-        -drive if=none,id=diskM,file=${1},cache=unsafe  \
-        -device ide-hd,drive=diskM,bootindex=1          \
+    local id
+    local index=0
+    for arg
+    do id=${arg%.*} index=$((index+1)) disk_opts="${disk_opts} \
+        -drive if=none,id=${id##*/},file=${arg},cache=unsafe    \
+        -device ide-hd,drive=${id##*/},bootindex=${index}       \
+        "
+    done
+}
+
+function q_fat() {
+    # $1 -> path main disk file
+    disk_opts="${disk_opts} \
         -drive format=raw,file=fat:rw:bootloader,media=disk \
         "
 }

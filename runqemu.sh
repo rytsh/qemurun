@@ -20,6 +20,8 @@ QEMU runner
 Usage: $0 <OPTIONS>
 
 OPTIONS:
+    --sudo
+        Sudo permission
     -p, --profile
         Create/Select profile
     -i, --img
@@ -82,7 +84,8 @@ generate_qcow "${PROFILE_FOLDER}" ${IMG}
 q_net
 q_gfx
 # q_gfx_f
-q_disk "${QCOW_IMG_DISK}"
+q_disk $(ls ${PROFILE_FOLDER}/disk*.qcow2)
+q_fat
 # [[ -n "${IMG}" ]] && q_disk_usb "${QCOW_IMG}"
 [[ -n "${IMG}" ]] && q_disk_cd "${QCOW_IMG}"
 q_wdg

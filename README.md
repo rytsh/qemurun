@@ -24,6 +24,11 @@ Check [TigerVNC](https://sourceforge.net/projects/tigervnc/).
 
 Goto fs0: and run efi file.
 
+```sh
+fs0:
+netboot.xyz.efi
+```
+
 If you want to use additional efi files add to the bootloader folder.
 
 ## Development
